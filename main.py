@@ -12,7 +12,7 @@ from PIL import Image
 import os
 
 # Define paths
-model_path = r'C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/diabetes_model.sav'
+model_path = r'C:\Users\Sanika\OneDrive\Desktop\Major Project\Diabetes\diabetes_model.sav'
 image_path = r'C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/dia.jpg'
 
 # Load the saved model
