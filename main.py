@@ -13,7 +13,7 @@ import os
 
 # Define paths
 model_path ='diabetes_model.sav'
-image_path = r'C:\Users\Sanika\OneDrive\Desktop\Major Project\Diabetes\dia.jpg'
+image_path = 'dia.jpg'
 
 # Load the saved model
 loaded_model = None
