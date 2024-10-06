@@ -9,9 +9,17 @@ import numpy as np
 import pickle
 import streamlit as st
 from PIL import Image 
+import os
+
+# Define paths
+model_path = r'C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/diabetes_model.sav'
+image_path = r'C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/dia.jpg'
 
 # Load the saved model
-loaded_model = pickle.load(open('C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/diabetes_model.sav', 'rb'))
+if os.path.exists(model_path):
+    loaded_model = pickle.load(open(model_path, 'rb'))
+else:
+    st.error("Model file not found. Please check the path.")
 
 # Function for prediction
 def diabetes_prediction(input_data):
@@ -32,13 +40,16 @@ def main():
 
     # Load and resize the image
     with col2:
-        try:
-            image = Image.open('C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/dia.jpg')
-            max_size = (400, 350)
-            image.thumbnail(max_size)
-            st.image(image, use_column_width=False)
-        except Exception as e:
-            st.error(f"Error loading image: {e}")
+        if os.path.exists(image_path):
+            try:
+                image = Image.open(image_path)
+                max_size = (400, 350)
+                image.thumbnail(max_size)
+                st.image(image, use_column_width=False)
+            except Exception as e:
+                st.error(f"Error loading image: {e}")
+        else:
+            st.error("Image file not found. Please check the path.")
 
     # Input fields
     Pregnancies = st.text_input('Number of Pregnancies')
