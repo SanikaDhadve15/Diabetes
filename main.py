@@ -13,25 +13,25 @@ import os
 
 # Define paths
 model_path = r'C:\Users\Sanika\OneDrive\Desktop\Major Project\Diabetes\diabetes_model.sav'
-image_path = r'C:/Users/Sanika/OneDrive/Desktop/Major Project/Diabetes/dia.jpg'
+image_path = r'C:\Users\Sanika\OneDrive\Desktop\Major Project\Diabetes\dia.jpg'
 
 # Load the saved model
+loaded_model = None
+
 if os.path.exists(model_path):
-    loaded_model = pickle.load(open(model_path, 'rb'))
+    with open(model_path, 'rb') as file:
+        loaded_model = pickle.load(file)
+    st.success("Model loaded successfully.")
 else:
     st.error("Model file not found. Please check the path.")
 
 # Function for prediction
 def diabetes_prediction(input_data):
-    # Convert input_data to numpy array
-    input_data_as_numpy_array = np.asarray(input_data)
+    if loaded_model is None:
+        return "Model not loaded."
 
-    # Reshape the array for one instance
-    input_data_reshaped = input_data_as_numpy_array.reshape(1, -1)
-
-    prediction = loaded_model.predict(input_data_reshaped)
-    print(prediction)
-
+    input_data_as_numpy_array = np.asarray(input_data).reshape(1, -1)
+    prediction = loaded_model.predict(input_data_as_numpy_array)
     return 'The person is diabetic' if prediction[0] == 1 else 'The person is not diabetic'
 
 def main():
@@ -52,41 +52,39 @@ def main():
             st.error("Image file not found. Please check the path.")
 
     # Input fields
-    Pregnancies = st.text_input('Number of Pregnancies')
-    Glucose = st.text_input('Glucose Level')
-    BloodPressure = st.text_input('Blood Pressure')
-    SkinThickness = st.text_input('Skin Thickness Value')
-    Insulin = st.text_input('Insulin Level')
-    BMI = st.text_input('BMI Value')
-    DiabetesPedigreeFunction = st.text_input('Diabetes Pedigree Function Value')
-    Age = st.text_input('Age of Patient')
+    Pregnancies = st.number_input('Number of Pregnancies', min_value=0, step=1)
+    Glucose = st.number_input('Glucose Level', min_value=0.0, step=0.1)
+    BloodPressure = st.number_input('Blood Pressure', min_value=0.0, step=0.1)
+    SkinThickness = st.number_input('Skin Thickness Value', min_value=0.0, step=0.1)
+    Insulin = st.number_input('Insulin Level', min_value=0.0, step=0.1)
+    BMI = st.number_input('BMI Value', min_value=0.0, step=0.1)
+    DiabetesPedigreeFunction = st.number_input('Diabetes Pedigree Function Value', min_value=0.0, step=0.01)
+    Age = st.number_input('Age of Patient', min_value=0, step=1)
 
     # Code for prediction
     diagnosis = ''
 
     # Creating button for prediction
     if st.button('Diabetes Result'):
-        try:
-            # Validate and convert inputs
-            inputs = [
-                int(Pregnancies),
-                float(Glucose),
-                float(BloodPressure),
-                float(SkinThickness),
-                float(Insulin),
-                float(BMI),
-                float(DiabetesPedigreeFunction),
-                int(Age)
-            ]
-            diagnosis = diabetes_prediction(inputs)
-        except ValueError:
-            st.error("Please enter valid numeric values.")
+        inputs = [
+            Pregnancies,
+            Glucose,
+            BloodPressure,
+            SkinThickness,
+            Insulin,
+            BMI,
+            DiabetesPedigreeFunction,
+            Age
+        ]
+        diagnosis = diabetes_prediction(inputs)
 
-    st.success(diagnosis)
-    st.write("Diabetes is a chronic condition that occurs when the body cannot properly regulate blood sugar levels, either due to insufficient insulin production (Type 1) or insulin resistance (Type 2). High blood sugar can lead to serious health complications, including heart disease, kidney damage, and nerve issues. Risk factors include obesity, sedentary lifestyle, and a family history of diabetes.")
+    if diagnosis:
+        st.success(diagnosis)
+
+    st.write("Diabetes is a chronic condition that occurs when the body cannot properly regulate blood sugar levels...")
     
     st.write("### Prevention Points:")
-    st.write("""
+    st.write("""\
         1. Healthy Diet
         2. Regular Physical Activity
         3. Weight Management
@@ -97,7 +95,6 @@ def main():
         8. Manage Stress
         9. Get Enough Sleep
     """)
-    st.write("These can significantly lower the risk of developing diabetes and its associated complications.")
 
 if __name__ == '__main__':
     main()
